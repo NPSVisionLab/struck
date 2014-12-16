@@ -24,11 +24,11 @@
  * along with Struck.  If not, see <http://www.gnu.org/licenses/>.
  * 
  */
-
+#define _USE_MATH_DEFINES
 #include "Sampler.h"
 #include "Config.h"
 
-#define _USE_MATH_DEFINES
+
 #include <cmath>
 
 using namespace std;
