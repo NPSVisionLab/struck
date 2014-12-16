@@ -32,6 +32,7 @@ SET(HEADER_FILES
 
 FIND_PATH( EIGEN_INCLUDE_DIR Eigen/Core
   PATHS
+  /usr/local/include/eigen2  # struck is not compatible with eigen3
   /opt/local/include/eigen2  # struck is not compatible with eigen3
   REQUIRED
 )
