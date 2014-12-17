@@ -10,7 +10,7 @@ detector = easy.getDetector( "StruckTracker" )
 
 
 # a test video; the location is relative to the "CVAC.DataDir"
-vfile = "toySoldier.mpg"
+vfile = "tracks/toySoldier.mpg"
 runset = cvac.RunSet()
 vlab = easy.getLabelable( vfile, labelText="soldier" )
 labloc = cvac.BBox(100, 120,40,100)
