@@ -13,7 +13,7 @@ detector = easy.getDetector( "StruckTracker" )
 vfile = "tracks/toySoldier.mpg"
 runset = cvac.RunSet()
 vlab = easy.getLabelable( vfile, labelText="soldier" )
-labloc = cvac.BBox(100, 120,40,100)
+labloc = cvac.BBox(255, 195,70,120)
 lab = cvac.LabeledLocation()
 lab.loc = labloc
 lab.confidence = 0
@@ -23,6 +23,8 @@ easy.addToRunSet(runset, lab, easy.getPurpose('pos'))
 modelfile = None
 props = easy.getDetectorProperties(detector)
 # turn on server display of tracking
+props.nativeWindowSize.width = 640;
+props.nativeWindowSize.height = 480;
 props.props["quietMode"] = "false"
 # turn on server display of debugging info
 #props.props["debugMode"] = "true"
