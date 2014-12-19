@@ -194,6 +194,7 @@ void StruckTracker::process( const Identity &client,
 
   OutputResults outputres(callback, mDetectorProps->callbackFreq);
 
+  localAndClientMsg(VLogger::INFO, NULL, "Converting video to images\n"); 
   //////////////////////////////////////////////////////////////////////////
   // Start - RunsetIterator
   int nSkipFrames = 1;  //the number of skip frames
@@ -214,10 +215,20 @@ void StruckTracker::process( const Identity &client,
   float scaleH = 1.f;
   string currentVideo = "";  // The current video we are processing
   Tracker tracker(mDetectorProps->config);
+#ifdef WIN32
+  // This shows a blank window on OSX so only do Windows
+  if (!mDetectorProps->config.quietMode)
+  {
+      namedWindow("result", CV_WINDOW_KEEPRATIO);
+      waitKey(1);
+  }
+#endif
   srand(mDetectorProps->config.seed);
   Mat frame;
   Mat result(mDetectorProps->config.frameHeight, mDetectorProps->config.frameWidth, CV_8UC3);
   mServiceMan->setStoppable();
+  int frameCnt = 0;
+  localAndClientMsg(VLogger::INFO, NULL, "Processing images\n"); 
   while(mRunsetIterator.hasNext())
   {
     if((mServiceMan != NULL) && (mServiceMan->stopRequested()))
@@ -242,6 +253,7 @@ void StruckTracker::process( const Identity &client,
     
     if (vfullname != currentVideo)
     {
+        frameCnt = 0;
         currentVideo = vfullname;
         scaleW = (float)mDetectorProps->config.frameWidth / frameOrig.cols;
         scaleH = (float)mDetectorProps->config.frameHeight / frameOrig.rows;
@@ -269,7 +281,10 @@ void StruckTracker::process( const Identity &client,
     }
     if (tracker.IsInitialised())
     {
+        localAndClientMsg(VLogger::DEBUG, NULL, "Process frame %d\n", 
+                          frameCnt++);
         tracker.Track(frame);
+#ifdef WIN32
         if (!mDetectorProps->config.quietMode && mDetectorProps->config.debugMode)
             tracker.Debug();
        
@@ -281,10 +296,14 @@ void StruckTracker::process( const Identity &client,
             // need to process window events
             waitKey(1);
         }
+#endif
         std::vector<cv::Rect> rects;
         const FloatRect& bb = tracker.GetBB();
         cv::Rect rec = cv::Rect((int)bb.XMin()/scaleW, (int) bb.YMin()/scaleH,
                                  (int)bb.Width()/scaleW, (int) bb.Height()/scaleH);
+        localAndClientMsg(VLogger::DEBUG, NULL, "res rec %d, %d, %d, %d\n",
+                          rec.x, rec.y, rec.width, rec.height
+                          );
         rects.push_back(rec);
         outputres.addResult(curres,labelable, rects, "positive", 1.0f);
     }else
@@ -295,11 +314,13 @@ void StruckTracker::process( const Identity &client,
     }
     
   }  
+#ifdef WIN32
   if (!mDetectorProps->config.quietMode)
   {
       destroyAllWindows();
       waitKey(1);
   }
+#endif
   // We are done so send any final results
   outputres.finishedResults(mRunsetIterator);
   mServiceMan->clearStop();

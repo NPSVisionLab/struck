@@ -4,6 +4,7 @@ Easy!  Demo for struck tracker
 
 import easy
 import cvac
+import sys
 
 # obtain a reference to Struck Tracker detector
 detector = easy.getDetector( "StruckTracker" )
@@ -25,7 +26,9 @@ props = easy.getDetectorProperties(detector)
 # turn on server display of tracking
 props.nativeWindowSize.width = 640;
 props.nativeWindowSize.height = 480;
-props.props["quietMode"] = "false"
+# quietMode false is currently only supported for windows
+if sys.platform == "win32":
+    props.props["quietMode"] = "false"
 # turn on server display of debugging info
 #props.props["debugMode"] = "true"
 # apply the detector type, using the model and testing the imgfile
