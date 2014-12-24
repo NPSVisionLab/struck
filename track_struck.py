@@ -1,10 +1,26 @@
 '''
 Easy!  Demo for struck tracker
 '''
-
+import Ice
 import easy
 import cvac
 import sys
+
+class MyDetectorCallbackReceiverI(easy.DetectorCallbackReceiverI):
+    def __init__(self):
+        easy.DetectorCallbackReceiverI.__init__(self)
+        
+    def foundNewResults(self, r2, current=None):
+        easy.DetectorCallbackReceiverI.foundNewResults(self, r2, current)
+        #easy.printResults(r2.results)
+        #sys.stdout.flush()
+        #import pydevd
+        #pydevd.connected = True
+        #pydevd.settrace(suspend=False)
+        easy.drawResults(r2.results)
+
+callbackRecv = MyDetectorCallbackReceiverI();
+
 
 # obtain a reference to Struck Tracker detector
 detector = easy.getDetector( "StruckTracker" )
@@ -27,17 +43,18 @@ props = easy.getDetectorProperties(detector)
 props.nativeWindowSize.width = 640;
 props.nativeWindowSize.height = 480;
 # quietMode false is currently only supported for windows
-if sys.platform == "win32":
-    props.props["quietMode"] = "false"
+#if sys.platform == "win32":
+#   props.props["quietMode"] = "false"
 # turn on server display of debugging info
 #props.props["debugMode"] = "true"
+props.props["callbackFrequency"] = "immediate"
 # apply the detector type, using the model and testing the imgfile
-results = easy.detect( detector, modelfile, runset, detectorProperties = props)
-
+easy.detect( detector, modelfile, runset, callbackRecv = callbackRecv, detectorProperties = props)
+results = callbackRecv.allResults;
 # you can print the results with Easy!'s pretty-printer;
 # we will explain the meaning of the "unlabeled" and the number
 # of the found label later.
 # or you can always print variables directly (uncomment the next line):
 # print("{0}".format( results ))
 print("------- Struck Tracker results: -------")
-easy.printResults( results )
+# easy.drawResults( results )
