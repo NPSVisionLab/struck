@@ -8,9 +8,12 @@ import sys
 
 class MyDetectorCallbackReceiverI(easy.DetectorCallbackReceiverI):
     def __init__(self):
+        import easy
+        #super(MyDetectorCallbackReceiverI, self).__init__()
         easy.DetectorCallbackReceiverI.__init__(self)
-        
+
     def foundNewResults(self, r2, current=None):
+        import easy
         easy.DetectorCallbackReceiverI.foundNewResults(self, r2, current)
         #easy.printResults(r2.results)
         #sys.stdout.flush()
@@ -18,7 +21,9 @@ class MyDetectorCallbackReceiverI(easy.DetectorCallbackReceiverI):
         #pydevd.connected = True
         #pydevd.settrace(suspend=False)
         easy.drawResults(r2.results)
-
+        
+        
+print(easy.CVAC_DataDir)
 callbackRecv = MyDetectorCallbackReceiverI();
 
 
