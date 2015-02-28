@@ -41,8 +41,15 @@ ADD_DEPENDENCIES(StruckTracker ${SLICE_FILES})
 SET_PROPERTY(SOURCE StruckTracker.cpp APPEND PROPERTY OBJECT_DEPENDS ${SLICE_FILES})
           
 IF( NOT ${BUILD_3RDPARTY_PACKAGE} )
-INSTALL( TARGETS StruckTracker
+    IF(WIN32)
+        INSTALL( TARGETS StruckTracker
+               DESTINATION bin
+               COMPONENT Runtime
+       )
+    ELSE (WIN32)
+        INSTALL( TARGETS StruckTracker
                DESTINATION lib
                COMPONENT Runtime
        )
+    ENDIF (WIN32)
 ENDIF( NOT ${BUILD_3RDPARTY_PACKAGE} )
