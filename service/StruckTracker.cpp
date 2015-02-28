@@ -250,7 +250,6 @@ void StruckTracker::process( const Identity &client,
     }
     resize(frameOrig, frame, cv::Size(mDetectorProps->config.frameWidth,
                                   mDetectorProps->config.frameHeight));
-    
     if (vfullname != currentVideo)
     {
         frameCnt = 0;
@@ -321,6 +320,7 @@ void StruckTracker::process( const Identity &client,
       waitKey(1);
   }
 #endif
+  printf("sending final results\n");
   // We are done so send any final results
   outputres.finishedResults(mRunsetIterator);
   mServiceMan->clearStop();
@@ -362,7 +362,10 @@ DetectorPropertiesI::DetectorPropertiesI()
 
 void DetectorPropertiesI::load(const DetectorProperties &p) 
 {
+    stringstream ss;
+    ss << p.verbosity;
     verbosity = p.verbosity;
+    getVLogger().setLocalVerbosityLevel( ss.str() );
     props = p.props;
     //Only load values that are not zero
     if (p.nativeWindowSize.width > 0 && p.nativeWindowSize.height > 0)
