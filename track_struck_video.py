@@ -33,13 +33,6 @@ props = easy.getDetectorProperties(detector)
 props.verbosity = 7
 # A model file is not required for this detector
 modelfile = None
-results = easy.detect( detector, modelfile, runset, detectorProperties = props)
-
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-'''
-Now we run it again this time setting up a callback to display the
-tracking frames on the images.
-'''
 
 class MyDetectorCallbackReceiverI(easy.DetectorCallbackReceiverI):
     def __init__(self):
@@ -54,10 +47,12 @@ class MyDetectorCallbackReceiverI(easy.DetectorCallbackReceiverI):
         # Draw the result video frame and the bounding box
         #easy.drawResults(r2.results)
         #write a video file with the results
-        # TODO get code fro draw results and create image with rectange
         substrates = easy.collectSubstrates(r2.results)
         for subpath in substrates.iterkeys():
             img = cv2.imread(subpath)
+            if img == None:
+                print("Could not read frame file " + subpath)
+                continue
             for lbl in substrates[subpath]:
                 for frame in lbl.keyframesLocations:
                     if isinstance(frame.loc, cvac.BBox):
@@ -91,4 +86,4 @@ if sys.platform == 'darwin':
     easy.guiqueue.startThread()
 else:
     easy.detect( detector, modelfile, runset, callbackRecv = callbackRecv, detectorProperties = props)
-    results = callbackRecv.allResults;
+    callbackRecv.writeResults;
